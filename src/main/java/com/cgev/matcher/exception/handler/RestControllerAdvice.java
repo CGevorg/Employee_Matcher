@@ -16,4 +16,12 @@ public class RestControllerAdvice {
         //Return localized message
         return ex.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    @ExceptionHandler(java.lang.RuntimeException.class)
+    String onResourceNotFoundHandler(RuntimeException ex) {
+        //Return localized message
+        return "Please contact Matcher support.";
+    }
 }
