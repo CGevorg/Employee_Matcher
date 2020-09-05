@@ -1,6 +1,6 @@
 package com.cgev.matcher.dto;
 
-public class EmployeeDTO {
+public class Employee {
 
     private String name;
 

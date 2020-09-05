@@ -11,7 +11,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.cgev.rest.RestStandardDemo.dto.EmployeeDTO" level="debug" additivity="false">
+        <Logger name="com.cgev.matcher" level="debug" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
         </Logger>
 
