@@ -25,7 +25,8 @@ document.getElementById("sendFile").addEventListener("click", function (e) {
         return response.json()
     }).then(function (data) {
         //document.getElementById("result").innerHTML = JSON.stringify(data, undefined, 2)
-
+        document.getElementById("score").innerHTML = "Average score = " + data["avgScore"]
+        document.getElementById("result").innerHTML = JSON.stringify(data["listOfMatches"], null, 2)
     })
 } )
 

@@ -2,7 +2,6 @@ package com.cgev.matcher.service;
 
 import com.cgev.matcher.dto.Employee;
 import com.cgev.matcher.dto.MatchingResult;
-import com.cgev.matcher.dto.Triplet;
 import com.cgev.matcher.exception.CouldNotParseFileException;
 import com.cgev.matcher.exception.NothingToMatchException;
 import com.cgev.matcher.helper.converter.CsvFileConverter;
@@ -20,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,14 +57,17 @@ public class MatcherService {
         SimpleWeightedGraph<Employee, DefaultWeightedEdge> graph = generateWeightedGraph(employees);
         MatchingAlgorithm<Employee, DefaultWeightedEdge> algorithm = getMaxWeightMatchingAlgorithm(graph);
         MatchingAlgorithm.Matching<Employee, DefaultWeightedEdge> matching = algorithm.getMatching();
-        Set<Triplet<String, String, Double>> listOfMatches = matching.getEdges()
+        List<List<? extends Serializable>> collect = matching.getEdges()
                 .stream()
                 .map(edge ->
-                        new Triplet<>(graph.getEdgeSource(edge).getName(),
+                        Arrays.asList(
+                                graph.getEdgeSource(edge).getName(),
                                 graph.getEdgeTarget(edge).getName(),
-                                graph.getEdgeWeight(edge))).collect(Collectors.toSet());
+                                graph.getEdgeWeight(edge)
+                        )
+                ).collect(Collectors.toList());
         MatchingResult result = new MatchingResult();
-        result.setListOfMatches(listOfMatches);
+        result.setListOfMatches(collect);
         result.setAvgScore(matching.getWeight()/ (employees.size() / 2));
         return result;
     }
