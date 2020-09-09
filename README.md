@@ -1,5 +1,5 @@
 # Employee_Matcher
-Application which give you an interface for matching the employees inside the company.
+The application which give you an interface for matching the employees inside the company.
 
 **For runnning a project run**
 `docker-compose up --build`
