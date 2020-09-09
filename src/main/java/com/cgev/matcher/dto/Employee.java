@@ -10,7 +10,7 @@ public class Employee {
 
     private Integer age;
 
-    private Integer utc_offset;
+    private Integer utcOffset;
 
     public String getName() {
         return name;
@@ -44,16 +44,16 @@ public class Employee {
         this.age = age;
     }
 
-    public Integer getUtc_offset() {
-        return utc_offset;
-    }
-
-    public void setUtc_offset(Integer utc_offset) {
-        this.utc_offset = utc_offset;
-    }
-
     @Override
     public String toString() {
         return name;
+    }
+
+    public Integer getUtcOffset() {
+        return utcOffset;
+    }
+
+    public void setUtcOffset(Integer utcOffset) {
+        this.utcOffset = utcOffset;
     }
 }
