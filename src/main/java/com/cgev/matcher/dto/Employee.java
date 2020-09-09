@@ -51,4 +51,9 @@ public class Employee {
     public void setUtc_offset(Integer utc_offset) {
         this.utc_offset = utc_offset;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

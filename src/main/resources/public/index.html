@@ -6,8 +6,15 @@
     <body>
         <p>Simple Web page for uploading the .csv file</p>
         <form name="" method="" action="">
-            <input type="file" accept="*.csv">
-            <input type="button" value="Upload to the server" onclick="CapacityChart();">
+            <input type="file" accept="*.csv" id="uploadedFile">
+            <input type="button" value="Upload to the server" id="sendFile" disabled>
+            <h2 id="score">Average score = </h2>
+            <p id="result"> Click upload button</p>
         </form>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+        <script src="script.js">
+
+    </script>
     </body>
 </html>
