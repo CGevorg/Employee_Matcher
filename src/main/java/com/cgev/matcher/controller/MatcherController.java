@@ -1,6 +1,6 @@
 package com.cgev.matcher.controller;
 
-import com.cgev.matcher.dto.MatchingResult;
+import com.cgev.matcher.dto.Result;
 import com.cgev.matcher.service.MatcherService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +22,7 @@ public class MatcherController {
      * @return the result of matching with the  best average score
      */
     @PostMapping("/v1/match/employees")
-    public MatchingResult processEmployees(@RequestParam("file") MultipartFile file){
+    public Result processEmployees(@RequestParam("file") MultipartFile file){
         return service.matchEmployees(file);
     }
 }

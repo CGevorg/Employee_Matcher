@@ -1,15 +1,18 @@
 package com.cgev.matcher.service;
 
 import com.cgev.matcher.dto.Employee;
-import com.cgev.matcher.dto.MatchingResult;
+import com.cgev.matcher.dto.Result;
 import com.cgev.matcher.exception.CouldNotParseFileException;
 import com.cgev.matcher.exception.NothingToMatchException;
+import com.cgev.matcher.helper.chain.AgeMatchingProcessor;
+import com.cgev.matcher.helper.chain.DivisionMatchingProcessor;
+import com.cgev.matcher.helper.chain.LocationMatchingProcessor;
+import com.cgev.matcher.helper.chain.MatchingProcessor;
+import com.cgev.matcher.helper.chain.MatchingResult;
+import static com.cgev.matcher.helper.chain.MatchingResult.MatchingState;
+import com.cgev.matcher.helper.chain.TimezoneMatchingProcessor;
 import com.cgev.matcher.helper.converter.CsvFileConverter;
 import com.cgev.matcher.helper.converter.EmployeeConverter;
-import com.cgev.matcher.helper.validator.AgeValidator;
-import com.cgev.matcher.helper.validator.DivisionValidator;
-import com.cgev.matcher.helper.validator.MatchingValidator;
-import com.cgev.matcher.helper.validator.TimezoneValidator;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.alg.matching.blossom.v5.KolmogorovWeightedMatching;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -34,7 +37,7 @@ public class MatcherService {
      * @param file from where we are going to extract input data
      * @return the result which is containing information about matching
      */
-    public MatchingResult matchEmployees(MultipartFile file) {
+    public Result matchEmployees(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         logger.info("Processing the file: " + fileName);
         String fileExtenstion = fileName.substring(fileName.lastIndexOf("."));
@@ -53,7 +56,7 @@ public class MatcherService {
      * @param employees list which we are going to process
      * @return the matching object which is containing matching results
      */
-    private MatchingResult matchEmployees(List<Employee> employees) {
+    private Result matchEmployees(List<Employee> employees) {
         SimpleWeightedGraph<Employee, DefaultWeightedEdge> graph = generateWeightedGraph(employees);
         MatchingAlgorithm<Employee, DefaultWeightedEdge> algorithm = getMaxWeightMatchingAlgorithm(graph);
         MatchingAlgorithm.Matching<Employee, DefaultWeightedEdge> matching = algorithm.getMatching();
@@ -66,7 +69,7 @@ public class MatcherService {
                                 graph.getEdgeWeight(edge)
                         )
                 ).collect(Collectors.toList());
-        MatchingResult result = new MatchingResult();
+        Result result = new Result();
         result.setListOfMatches(collect);
         result.setAvgScore(matching.getWeight()/ (employees.size() / 2));
         return result;
@@ -83,6 +86,16 @@ public class MatcherService {
         return new KolmogorovWeightedMatching<>(graph);
     }
 
+    public MatchingProcessor makeMatchingChain() {
+        MatchingProcessor chain1 = new LocationMatchingProcessor();
+        MatchingProcessor chain2 = new DivisionMatchingProcessor();
+        MatchingProcessor chain3 = new AgeMatchingProcessor();
+        MatchingProcessor chain4 = new TimezoneMatchingProcessor();
+        chain1.setSuccessor(chain2);
+        chain2.setSuccessor(chain3);
+        chain3.setSuccessor(chain4);
+        return chain1;
+    }
     /**
      * Determine edge weight of two vertices
      *
@@ -91,15 +104,15 @@ public class MatcherService {
      * @return the weight of edge
      */
     private int determineWeightOfEdge(Employee e1, Employee e2) {
-        List<MatchingValidator> validators = Arrays.asList(
-                AgeValidator.getInstance(),
-                DivisionValidator.getInstance(),
-                TimezoneValidator.getInstance());
-        int sum = validators.stream().mapToInt(validator -> validator.validateMatching(e1, e2)).sum();
-        if(sum > 100) {
-            sum = 100;
+        MatchingProcessor matchingProcessor = makeMatchingChain();
+        MatchingResult match = matchingProcessor.match(e1, e2);
+        if(match.getMatchingState() == MatchingState.NOT_MATCHED) {
+            return 0;
+        } else if(match.getMatchingState() == MatchingState.MATCHED) {
+            return 100;
+        } else {
+            return match.getScore();
         }
-        return sum;
     }
 
     /**

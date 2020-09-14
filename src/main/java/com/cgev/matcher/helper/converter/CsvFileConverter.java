@@ -41,6 +41,8 @@ public class CsvFileConverter implements EmployeeConverter {
                 employee.setDivision(csvRecord.get(2));
                 employee.setAge(Integer.parseInt(csvRecord.get(3)));
                 employee.setUtcOffset(Integer.parseInt(csvRecord.get(4)));
+                employee.setLocation(csvRecord.get(5));
+                employee.setSameLocationPreference(csvRecord.get(6));
                 employees.add(employee);
             }
             logger.info("File processing finished successfully");

@@ -12,6 +12,10 @@ public class Employee {
 
     private Integer utcOffset;
 
+    private String location;
+
+    private String sameLocationPreference;
+
     public String getName() {
         return name;
     }
@@ -55,5 +59,21 @@ public class Employee {
 
     public void setUtcOffset(Integer utcOffset) {
         this.utcOffset = utcOffset;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getSameLocationPreference() {
+        return sameLocationPreference;
+    }
+
+    public void setSameLocationPreference(String sameLocationPreference) {
+        this.sameLocationPreference = sameLocationPreference;
     }
 }
